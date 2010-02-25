@@ -1,0 +1,9 @@
+---
+:username: user
+:password: pass 
+:includes:
+  - Modern Family
+  - Lost
+  - White Collar
+:excludes:
+  - '720p'
