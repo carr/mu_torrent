@@ -2,11 +2,15 @@
 
 # TODO
 # * bundler
+# * daemonization
+# * remove torrent after finish
+# * error handling
 require 'rubygems'  
 require 'tweetstream'
 require 'logger'
 
-CONFIG = YAML.load(File.read('config.yml'))
+ROOT = File.dirname(__FILE__)
+CONFIG = YAML.load(File.read(File.join(ROOT, 'config.yml')))
 
 # represents one show with a URL to the torrent file
 class Torrent
@@ -49,15 +53,14 @@ class Torrent
   end
 end
 
-$log = Logger.new(STDOUT)  #('log_file.log')
+$log = Logger.new(File.join(ROOT, 'log_file.log')) # (STDOUT)  #
 $log.info "Started muTorrent"
+$log.info CONFIG.inspect
 
 EZTV = 14557926
 CARR = 14592420
 
-#, 'mu_torrent'
-
-TweetStream::Client.new(CONFIG[:username], CONFIG[:password]).follow(CARR) do |status|  
+TweetStream::Daemon.new(CONFIG[:username], CONFIG[:password]).follow(CARR) do |status|  
   $log.info "Status occured - #{status.text}"
   t = Torrent.download(status.text)
 end
